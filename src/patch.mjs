@@ -217,16 +217,33 @@ After apply/revert, fully quit and relaunch DSH Desktop.`)
 }
 
 const COMMANDS = { status, verify, apply, revert, help }
+/** Flags that consume the following argv item, so that item is not mistaken for a command word. */
+const VALUE_FLAGS = new Set(['--bundle', '--resources'])
+
+/** Positional words only: flags and their values are skipped (`--bundle <path> apply` → `apply`). */
+function positionalArgs(argv) {
+  const words = []
+  for (let index = 0; index < argv.length; index++) {
+    const item = argv[index]
+    if (VALUE_FLAGS.has(item)) {
+      index += 1
+      continue
+    }
+    if (item.startsWith('-')) continue
+    words.push(item)
+  }
+  return words
+}
 
 export function main(argv = process.argv.slice(2)) {
-  const command = argv.find((item) => !item.startsWith('-')) ?? 'status'
-  const run = COMMANDS[command]
-  if (run === undefined) {
+  const command = positionalArgs(argv)[0] ?? 'status'
+  if (!Object.hasOwn(COMMANDS, command)) {
     console.error(`unknown command "${command}"`)
-    return help() === 0 ? 2 : 2
+    help()
+    return 2
   }
   try {
-    return run(argv)
+    return COMMANDS[command](argv)
   } catch (error) {
     if (error instanceof PatchError) {
       console.error(`error: ${error.message}`)

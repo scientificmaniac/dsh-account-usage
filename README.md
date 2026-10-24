@@ -107,7 +107,7 @@ npm run engine-test    # anchor handling, insertion, idempotence, refusal paths,
 npm run logic-test     # window/streak/four-bucket math, hostile-data degradation
 npm run load-test      # executes the patched bundle through the shell's __ModuleLoader__ (needs an install)
 npm run render-test    # renders the panel with a minimal React shim and asserts the copy/figures
-npm run preview        # regenerates docs/preview.html (light + dark)
+npm run preview        # regenerates docs/preview.html (light + dark, zh); add -- --locale en for English
 ```
 
 Tests that need a real installation skip with exit code 0 when none is found. Verified versions live in

@@ -104,7 +104,7 @@ npm run engine-test    # 锚点处理、插入、幂等、拒绝路径、安装�
 npm run logic-test     # 窗口 / 连续天数 / 四桶 / 敌意数据降级
 npm run load-test      # 按 __ModuleLoader__ 协议执行补丁后 bundle（需要安装）
 npm run render-test    # 用 React 垫片渲染面板并断言文案与数字
-npm run preview        # 重新生成 docs/preview.html（浅色 + 深色）
+npm run preview        # 重新生成 docs/preview.html（浅色 + 深色，中文）；加 -- --locale en 生成英文版
 ```
 
 需要真实安装的测试在找不到安装时会以退出码 0 跳过。已验证版本登记在 `src/anchors.mjs` 的

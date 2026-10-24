@@ -4,7 +4,7 @@
  * so CI can verify anchor handling, insertion, idempotence and syntax gating without a DSH install.
  */
 
-import { readSnippet, buildPatchedText, checkSyntax, countOccurrences, isPatched, PatchError } from '../src/patch.mjs'
+import { readSnippet, buildPatchedText, checkSyntax, countOccurrences, isPatched, PatchError, main } from '../src/patch.mjs'
 import { PATCH_MARKER } from '../src/anchors.mjs'
 import { candidateResourceDirs, BUNDLE_SUBPATH } from '../src/bundle.mjs'
 
@@ -140,6 +140,23 @@ const macDirs = candidateResourceDirs('darwin', {}, '/Users/x')
 check('macOS candidates include /Applications', macDirs.includes('/Applications/DSH Desktop.app/Contents/Resources'))
 const linuxDirs = candidateResourceDirs('linux', {}, '/home/x')
 check('linux candidates include /opt', linuxDirs.includes('/opt/DSH Desktop/resources'))
+
+// 6. CLI command parsing (help / unknown / flags before the command word)
+function quietly(run) {
+  const { log, error } = console
+  console.log = () => {}
+  console.error = () => {}
+  try {
+    return run()
+  } finally {
+    console.log = log
+    console.error = error
+  }
+}
+check('help exits 0', quietly(() => main(['help'])) === 0)
+check('unknown command exits 2', quietly(() => main(['nope'])) === 2)
+check('flags before the command are skipped', quietly(() => main(['--bundle', 'x', 'help'])) === 0)
+check('no arguments defaults to status parser path', quietly(() => main(['--resources', 'x', 'unknown'])) === 2)
 
 if (failures > 0) {
   console.error(`\n${failures} check(s) failed`)
