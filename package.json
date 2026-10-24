@@ -1,0 +1,31 @@
+{
+  "name": "dsh-account-usage",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Unofficial patch: token usage, last-7-days usage and activity stats under Settings → Account in DSH Desktop",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "patch",
+    "settings",
+    "token-usage",
+    "desktop"
+  ],
+  "scripts": {
+    "status": "node src/patch.mjs status",
+    "verify": "node src/patch.mjs verify",
+    "apply": "node src/patch.mjs apply",
+    "revert": "node src/patch.mjs revert",
+    "engine-test": "node scripts/engine-test.mjs",
+    "logic-test": "node scripts/logic-test.mjs",
+    "load-test": "node scripts/load-test.mjs",
+    "render-test": "node scripts/render-test.mjs",
+    "preview": "node scripts/build-preview.mjs",
+    "check": "node --check src/snippet.js && node --check src/anchors.mjs && node --check src/bundle.mjs && node --check src/patch.mjs && node scripts/engine-test.mjs && node scripts/logic-test.mjs"
+  }
+}
