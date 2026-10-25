@@ -1,139 +1,140 @@
 # dsh-account-usage
 
-An unofficial patch for **DSH Desktop** (DeepSeek Harness) that puts a local usage panel under
-**Settings → Account & balance**: token usage, last 7 days, and activity.
+![dsh-account-usage 宣传图](docs/banner.zh.png)
+
+为 **DSH Desktop**（DeepSeek Harness）准备的社区补丁：在 **设置 → 账号与余额** 下方增加一块本地用量面板，
+包含 Token 统计、近 7 天用量与活跃度。
 
 > [!NOTE]
-> This is a community patch, not a DeepSeek product. It edits one file inside your own DSH Desktop
-> installation and is reverted automatically when you upgrade the app (then re-apply).
+> 这是社区补丁，不是 DeepSeek 官方功能。它只修改你自己机器上 DSH Desktop 安装目录里的一个文件，
+> 应用升级后补丁会失效，重跑一次即可。
 
-Static preview in light and dark themes: [`docs/preview.html`](docs/preview.html) — download and open it in a browser.
+浅色 / 深色静态预览：[`docs/preview.html`](docs/preview.html)（下载后用浏览器打开）。
 
-## What you get
+## 效果图
 
-| Card | Contents | Source |
+![中文界面效果图](docs/screenshot.zh.png)
+
+## 新增内容
+
+| 卡片 | 内容 | 数据来源 |
 | --- | --- | --- |
-| **Token usage** | Lifetime billed tokens, four-bucket composition bar (input / cache read / cache write / output) with shares, model request count | Official `tokenUsage` session projection; falls back to the `contextActivity` day ledger |
-| **Last 7 days** | One bar per local calendar day, 7-day total and daily average | `contextActivity.days` (per-day ledger registered by dsh-context) |
-| **Activity** | Last 7 days as intensity cells, active days x/7, current streak, turns and tool calls | Same ledger (`requests` / `turns` / `toolCalls`) |
+| **Token 统计** | 累计计费 tokens、四段构成条（输入 / 缓存命中 / 缓存写入 / 输出）及占比、模型请求数 | 官方 `tokenUsage` 会话投影；缺失时退回 `contextActivity` 按天账本 |
+| **近 7 天用量** | 每个本地日历日一根柱、7 天合计与日均 | `contextActivity.days`（dsh-context 注册的按天账本） |
+| **活跃度** | 近 7 天强度格、活跃天数 x/7、连续天数、回合数、工具调用数 | 同上（`requests` / `turns` / `toolCalls`） |
 
-- Scope is **all sessions** listed by the harness (subagent sessions included, counted once).
-- Days are **browser-local**; the window re-computes at midnight without reloading.
-- Everything is read from the local session store — the panel itself makes no network calls. The only
-  request is a same-origin `POST api/dsh-context/backfill` to an *optional* dsh-context route (see below).
+- 口径为**全部会话**（含子代理会话，且不重复计入父会话）。
+- 按**浏览器本地时区**切日；跨零点自动重算，无需刷新。
+- 只读本机会话数据，面板自身不发起网络请求；唯一的外部请求是可选的
+  `POST api/dsh-context/backfill`（同源、dsh-context 插件的回填路由）。
 
-## Requirements
+## 环境要求
 
 | | |
 | --- | --- |
-| DSH Desktop | Installed Desktop app. Anchor set verified against **0.2.1-rc.2** |
-| Node.js | **18 or newer** (the patch scripts only) |
-| dsh-context plugin | Optional. Without it: lifetime tokens still work; the per-day window/activity may stay empty |
+| DSH Desktop | 已安装的桌面版；锚点针对 **0.2.1-rc.2** 验证 |
+| Node.js | **18 或更高**（仅补丁脚本需要） |
+| dsh-context 插件 | 可选。未安装时：累计 Token 仍可用，按天窗口/活跃度可能为空 |
 
-## Install
+## 安装
 
-The patch edits this file inside your installation:
+补丁修改的是安装目录里的这个文件：
 
 ```
 <resources>/app/node_modules/@deepseek-ai/dsh-client-ui-settings-account/lib/client.js
 ```
 
-Pass the path explicitly, or point at the `resources` directory, or set an env var:
+显式传路径、传 `resources` 目录，或用环境变量：
 
 ```powershell
-# Windows: usually %LOCALAPPDATA%\Programs\DSH Desktop\resources
+# Windows 通常在 %LOCALAPPDATA%\Programs\DSH Desktop\resources
 node src/patch.mjs status --bundle "<install>/resources/app/node_modules/@deepseek-ai/dsh-client-ui-settings-account/lib/client.js"
-node src/patch.mjs verify --bundle "<...>/client.js"   # anchors + syntax, writes nothing
-node src/patch.mjs apply  --bundle "<...>/client.js"   # backup, then patch
+node src/patch.mjs verify --bundle "<...>/client.js"   # 只校验锚点与语法，不写文件
+node src/patch.mjs apply  --bundle "<...>/client.js"   # 备份后打补丁
 ```
 
 ```powershell
-# or point at the resources directory
+# 或指向 resources 目录
 node src/patch.mjs apply --resources "<install>/resources"
 
-# or use environment variables
+# 或用环境变量
 $env:DSH_ACCOUNT_BUNDLE = "<...>/client.js"    # PowerShell
 # export DSH_ACCOUNT_BUNDLE="<...>/client.js"  # bash/zsh
 ```
 
-`apply` is idempotent: an already patched bundle is left alone. Every write is backed up to
-`backups/` first, and the candidate text must pass `node --check` before it replaces the file.
+`apply` 是幂等的：已打补丁会直接跳过。每次写入前都会备份到 `backups/`，并在替换文件前用
+`node --check` 做语法门禁。
 
-Then **fully quit and relaunch DSH Desktop** (the web shell snapshots plugin bundles at host start —
-a page refresh does not pick up the change) and open **Settings → Account & balance**.
+然后**完全退出并重新启动 DSH Desktop**（Web 外壳在 host 启动时对插件 bundle 做快照，刷新页面不会重新读取），
+打开 **设置 → 账号与余额**。
 
-### Custom install locations
+### 自定义安装位置
 
-The automatic probe only covers default locations (Windows `%LOCALAPPDATA%\Programs`, `Program Files`;
-macOS `/Applications`; Linux `/opt`, `/usr/lib`, `~/.local/share`). If `status` reports that the bundle
-could not be located, pass `--bundle` or `--resources` as above.
+自动探测只覆盖默认位置（Windows 的 `%LOCALAPPDATA%\Programs`、`Program Files`；macOS 的
+`/Applications`；Linux 的 `/opt`、`/usr/lib`、`~/.local/share`）。如果 `status` 提示找不到 bundle，
+按上面的方式传 `--bundle` 或 `--resources`。
 
-If you run DSH from source or a global npm install instead of the Desktop app, point `--bundle` at that
-installation's `node_modules/@deepseek-ai/dsh-client-ui-settings-account/lib/client.js`.
+如果你用的是源码启动或全局 npm 安装的 DSH，把 `--bundle` 指向那份安装里的
+`node_modules/@deepseek-ai/dsh-client-ui-settings-account/lib/client.js`。
 
-## Revert and upgrades
-
-```powershell
-node src/patch.mjs revert          # restores the most recent backup
-```
-
-- Backups live in `backups/` (git-ignored) and are named `client.js.<timestamp>.bak`.
-- A DSH Desktop update replaces the installation files, so the patch disappears — run `apply` again.
-- If a future release changes the bundle, the anchors stop matching: `apply` aborts with
-  `anchor "<name>" matched 0 time(s)` **without touching the file**. Add the new anchor set (or send a
-  PR) rather than force-applying.
-
-## How it works
-
-The account settings page is a `settings.section` slot entry with no sub-slot of its own, so the panel
-is inserted by editing the shipped client bundle at five anchor points:
-
-1. `en` / `zh` account dictionaries gain the panel copy.
-2. A self-contained module (`src/snippet.js`) is inserted before the `AccountSection` region.
-3. The original component is renamed `AccountSectionMain`.
-4. A new `AccountSection` renders `AccountSectionMain` plus the usage panel in a fragment.
-5. The `settings.section` registration injects `refreshSessions` (used to re-read the session list
-   after a backfill).
-
-The panel reads the harness's standard `useSessions` hook (root-scope standard kit), is wrapped in its
-own error boundary (a broken panel never takes the account cards down with it), and renders nothing
-when the hook is absent.
-
-## Development
+## 回滚与升级
 
 ```powershell
-npm run check          # CI gate: syntax + patch-engine test + aggregation test (no install needed)
-npm run engine-test    # anchor handling, insertion, idempotence, refusal paths, path detection
-npm run logic-test     # window/streak/four-bucket math, hostile-data degradation
-npm run load-test      # executes the patched bundle through the shell's __ModuleLoader__ (needs an install)
-npm run render-test    # renders the panel with a minimal React shim and asserts the copy/figures
-npm run preview        # regenerates docs/preview.html (light + dark, zh); add -- --locale en for English
+node src/patch.mjs revert          # 还原最近一次备份
 ```
 
-Tests that need a real installation skip with exit code 0 when none is found. Verified versions live in
-`src/anchors.mjs` (`VERIFIED_VERSIONS`).
+- 备份在 `backups/`（已被 .gitignore 忽略），命名 `client.js.<时间戳>.bak`。
+- DSH Desktop 升级会替换安装文件，补丁随之消失——重跑一次 `apply` 即可。
+- 若新版本的 bundle 结构变了，锚点将无法匹配：`apply` 会以
+  `anchor "<name>" matched 0 time(s)` 中止，且**不修改文件**。此时应补充锚点表（或提 PR），不要强行套用。
 
-## Compatibility
+## 实现方式
 
-| DSH release | Status |
+账号设置页是一个 `settings.section` slot 条目，自身没有子 slot，所以面板通过五处锚点修改已编译的
+client bundle 插入：
+
+1. `en` / `zh` 账号字典追加面板文案；
+2. 在 `AccountSection` 区域前插入自包含模块（`src/snippet.js`）；
+3. 原组件更名为 `AccountSectionMain`；
+4. 新增 `AccountSection`，用 `Fragment` 同时渲染原组件与用量面板；
+5. `settings.section` 注册项的注入里追加 `refreshSessions`（回填后重新读取会话列表）。
+
+面板读取框架的 `useSessions` 标准钩子（root scope 标准 kit），自带错误边界（面板出错不会连累账号与余额卡片），
+钩子缺失时整块不渲染。
+
+## 开发与测试
+
+```powershell
+npm run check          # CI 门禁：语法 + 补丁引擎测试 + 聚合逻辑测试（无需安装）
+npm run engine-test    # 锚点处理、插入、幂等、拒绝路径、安装路径探测
+npm run logic-test     # 窗口 / 连续天数 / 四桶 / 敌意数据降级
+npm run load-test      # 按 __ModuleLoader__ 协议执行补丁后 bundle（需要安装）
+npm run render-test    # 用 React 垫片渲染面板并断言文案与数字
+npm run preview        # 重新生成 docs/preview.html（浅色 + 深色，中文）；加 -- --locale en 生成英文版
+```
+
+需要真实安装的测试在找不到安装时会以退出码 0 跳过。已验证版本登记在 `src/anchors.mjs` 的
+`VERIFIED_VERSIONS` 中。
+
+## 兼容性
+
+| DSH 版本 | 状态 |
 | --- | --- |
-| `0.2.1-rc.2` | verified (anchors tested end to end) |
-| other releases | attempted, aborts safely if anchors moved |
+| `0.2.1-rc.2` | 已验证（锚点端到端测试） |
+| 其它版本 | 会尝试套用；锚点移动则安全中止 |
 
-## Legal and privacy
+## 许可与隐私
 
-- License: [MIT](LICENSE). Not affiliated with DeepSeek; “DeepSeek Harness”, “DSH” and DSH marks belong
-  to their owners.
-- The patch edits **your local installation only**. It ships no DSH code, no modified bundles and no
-  binaries.
-- No telemetry, no remote storage: the panel only reads session projections already held in the
-  browser and (optionally) calls the same-origin backfill route of a locally installed plugin.
-- Third-party attributions: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+- 许可：[MIT](LICENSE)。与 DeepSeek 无关联；“DeepSeek Harness”“DSH”等标识归其所有者。
+- 补丁只修改**你本机的安装**，不附带任何 DSH 代码、修改后的 bundle 或二进制。
+- 无遥测、无远程存储：面板只读浏览器里已有的会话投影，另可选调用本地插件同源的回填路由。
+- 第三方声明：[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
-## Acknowledgements
+## 致谢
 
-- [dsh-context](https://github.com/bowenliang123/dsh-context) for the per-day activity projection, the
-  backfill route and the visual language this panel follows.
-- The DSH team for publishing the client packages and their source layouts (MIT).
+- [dsh-context](https://github.com/bowenliang123/dsh-context)：提供了本面板使用的按天活动投影、回填路由与视觉语言。
+- DSH 团队：公开了客户端包与源码布局（MIT）。
 
-中文文档：[README.zh.md](README.zh.md)
+参与贡献：[CONTRIBUTING.md](CONTRIBUTING.md)
+
+English documentation: [README.en.md](README.en.md)
