@@ -1,9 +1,17 @@
-# dsh-account-usage
+<div align="center">
 
 ![dsh-account-usage banner](docs/banner.en.png)
 
+# dsh-account-usage
+
 An unofficial patch for **DSH Desktop** (DeepSeek Harness) that puts a local usage panel under
 **Settings → Account & balance**: token usage, last 7 days, and activity.
+
+![License: MIT](https://img.shields.io/badge/License-MIT-blue) ![DSH Desktop](https://img.shields.io/badge/DSH%20Desktop-0.2.1--rc.2-4D6BFE) ![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933) ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
+
+English · [简体中文](README.md)
+
+</div>
 
 > [!NOTE]
 > This is a community patch, not a DeepSeek product. It edits one file inside your own DSH Desktop
@@ -143,5 +151,3 @@ Tests that need a real installation skip with exit code 0 when none is found. Ve
 - The DSH team for publishing the client packages and their source layouts (MIT).
 
 Contributing: [CONTRIBUTING_en.md](CONTRIBUTING_en.md)
-
-中文文档：[README.md](README.md)

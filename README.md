@@ -1,9 +1,17 @@
-# dsh-account-usage
+<div align="center">
 
 ![dsh-account-usage 宣传图](docs/banner.zh.png)
 
+# dsh-account-usage
+
 为 **DSH Desktop**（DeepSeek Harness）准备的社区补丁：在 **设置 → 账号与余额** 下方增加一块本地用量面板，
 包含 Token 统计、近 7 天用量与活跃度。
+
+![License: MIT](https://img.shields.io/badge/License-MIT-blue) ![DSH Desktop](https://img.shields.io/badge/DSH%20Desktop-0.2.1--rc.2-4D6BFE) ![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933) ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
+
+简体中文 · [English](README.en.md)
+
+</div>
 
 > [!NOTE]
 > 这是社区补丁，不是 DeepSeek 官方功能。它只修改你自己机器上 DSH Desktop 安装目录里的一个文件，
@@ -136,5 +144,3 @@ npm run preview        # 重新生成 docs/preview.html（浅色 + 深色，中�
 - DSH 团队：公开了客户端包与源码布局（MIT）。
 
 参与贡献：[CONTRIBUTING.md](CONTRIBUTING.md)
-
-English documentation: [README.en.md](README.en.md)
