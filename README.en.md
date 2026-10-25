@@ -1,8 +1,8 @@
 <div align="center">
 
-![dsh-account-usage banner](docs/banner.en.png)
+![dsh-weekstrip banner](docs/banner.en.png)
 
-# dsh-account-usage
+# dsh-weekstrip
 
 An unofficial patch for **DSH Desktop** (DeepSeek Harness) that puts a local usage panel under
 **Settings → Account & balance**: token usage, last 7 days, and activity.

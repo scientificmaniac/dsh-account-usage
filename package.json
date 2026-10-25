@@ -1,5 +1,5 @@
 {
-  "name": "dsh-account-usage",
+  "name": "dsh-weekstrip",
   "version": "0.1.0",
   "private": true,
   "description": "Unofficial patch: token usage, last-7-days usage and activity stats under Settings → Account in DSH Desktop",

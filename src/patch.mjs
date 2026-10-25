@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * dsh-account-usage — patch engine and CLI.
+ * dsh-weekstrip — patch engine and CLI.
  *
  * Appends a local usage panel (tokens / last 7 days / activity) under Settings → Account in DSH Desktop,
  * by inserting one self-contained module into the account-settings client bundle that the Desktop ships.
@@ -197,7 +197,7 @@ function revert(argv) {
 }
 
 function help() {
-  console.log(`dsh-account-usage - patch engine
+  console.log(`dsh-weekstrip - patch engine
 
 usage: node src/patch.mjs <command> [--bundle <client.js>] [--resources <resources dir>]
 

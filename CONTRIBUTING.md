@@ -1,6 +1,6 @@
 # 贡献指南
 
-感谢关注 dsh-account-usage！这是一个针对 **DSH Desktop**（DeepSeek Harness）的社区补丁，在
+感谢关注 dsh-weekstrip！这是一个针对 **DSH Desktop**（DeepSeek Harness）的社区补丁，在
 **设置 → 账号与余额** 下方增加本地用量面板。欢迎 issue、讨论与 PR。
 
 英文版：[CONTRIBUTING_en.md](CONTRIBUTING_en.md)
@@ -26,7 +26,7 @@
 
 ```powershell
 git clone <你的 fork>
-cd dsh-account-usage
+cd dsh-weekstrip
 npm run check        # CI 门禁：语法 + 补丁引擎测试 + 聚合逻辑测试
 ```
 

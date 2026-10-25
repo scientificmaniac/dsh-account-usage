@@ -1,8 +1,8 @@
 <div align="center">
 
-![dsh-account-usage 宣传图](docs/banner.zh.png)
+![dsh-weekstrip 宣传图](docs/banner.zh.png)
 
-# dsh-account-usage
+# dsh-weekstrip
 
 为 **DSH Desktop**（DeepSeek Harness）准备的社区补丁：在 **设置 → 账号与余额** 下方增加一块本地用量面板，
 包含 Token 统计、近 7 天用量与活跃度。

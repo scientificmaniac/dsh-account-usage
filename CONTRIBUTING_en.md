@@ -1,6 +1,6 @@
 # Contributing Guide
 
-Thanks for your interest in dsh-account-usage! This is a community patch for **DSH Desktop**
+Thanks for your interest in dsh-weekstrip! This is a community patch for **DSH Desktop**
 (DeepSeek Harness) that adds a local usage panel under **Settings → Account & balance**.
 Issues, discussions and PRs are all welcome.
 
@@ -29,7 +29,7 @@ When filing an issue, please include:
 
 ```powershell
 git clone <your fork>
-cd dsh-account-usage
+cd dsh-weekstrip
 npm run check        # CI gate: syntax + patch-engine test + aggregation test
 ```
 
